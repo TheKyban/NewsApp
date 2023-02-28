@@ -51,21 +51,18 @@
 
 
 
-    <div class="container row mx-auto justify-content-center">
+    <div class="container row mx-auto mt-2 justify-content-center text-center">
 
         <!-- Cards Starts here -->
+        <div m-auto container>
 
+            <span id="result">India</span> <span id="totalNum"></span>
+        </div>
         <div id="content" class="row justify-content-center">
 
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                        card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
 
         </div>
 
@@ -103,22 +100,36 @@
 
     let articlesPerPage;
     let totalPage;
+    let query;
+    let page;
+    try {
+        page = parseInt(window.location.search.split("?")[1].split("&")[1].split("=")[1])
+        query = window.location.search.split("?")[1].split("=")[1].split("&")[0]
 
-    let query = window.location.search.split("?")[1].split("=")[1].split("&")[0]
-    let page = parseInt(window.location.search.split("?")[1].split("&")[1].split("=")[1])
+    }catch(e) {
+        page=1;
+        query="india"
+    }
+    
 
     console.log(query, page)
 
     const fetchNews = async (query, page) => {
-        let a = await fetch(end_point + query + api+`&pageSize=10&page=${page}`)
+        let a = await fetch("/api?q=" + query + api+`&pageSize=10&page=${page}`)
         let r = await a.json()
+
         console.log(r)
+
         totalPage = Math.ceil(r.totalResults / articlesPerPage)
+
         pre.href = `/?q=${query}&page=${page - 1}`
         next.href = `/?q=${query}&page=${page + 1}`
         one.href= `/?q=${query}&page=${1}`
         two.href= `/?q=${query}&page=${2}`
         three.href= `/?q=${query}&page=${3}`
+
+        result.innerHTML = query
+        totalNum.innerHTML = `- ${r.totalResults}`
 
         let str = "";
         for (let item of r.articles) {
